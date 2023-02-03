@@ -154,6 +154,10 @@ def do_binary(src_, dst_, normalize=False):
                 np.save(os.path.join(temp_dir_name,  "label_%03d" % i), temp_npy)
 
 
+def filename2number(filename, bias=4):
+    return int(filename[-bias-4:-4]) - 1
+
+
 def do_dcm(src_, dst_, normalize=True):
     global dcm_count
     dcm_count += 1
@@ -174,8 +178,10 @@ def do_dcm(src_, dst_, normalize=True):
             dcm = pydicom.dcmread(os.path.join(src_, mode_, "dcm", file))
             if normalize:
                 np.save(os.path.join(temp_dir_name, "input_%03d" % cnt), normalize_npy(dcm.pixel_array))
-                lst_data.append([case, mode_, fs_dict[dcm.SeriesDescription], file])
+                lst_data.append([case, mode_, fs_dict[dcm.SeriesDescription], filename2number(file)])
             else:
                 np.save(os.path.join(temp_dir_name, "input_%03d" % cnt), dcm.pixel_array)
-                lst_data.append([case, mode_, fs_dict[dcm.SeriesDescription], file])
+                lst_data.append([case, mode_, fs_dict[dcm.SeriesDescription], filename2number(file)])
     return lst_data
+
+
